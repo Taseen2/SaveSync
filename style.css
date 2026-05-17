@@ -105,6 +105,19 @@ button {
   overflow: hidden;
 }
 
+/* Accent button used for modal close as requested */
+.button-accent {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: color-contrast(var(--accent) vs var(--surface-strong), var(--text));
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 18%, rgba(0,0,0,0.12));
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.button-accent:active {
+  transform: translateY(1px) scale(0.998);
+}
+
 h1,
 h2,
 h3,
@@ -114,7 +127,7 @@ p {
 }
 
 h1 {
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   font-size: clamp(2.1rem, 6vw, 4.2rem);
   line-height: 1;
   letter-spacing: -0.03em;
@@ -149,6 +162,14 @@ select {
   outline: none;
   padding: 12px 13px;
   transition: border-color var(--speed) ease, box-shadow var(--speed) ease, background var(--speed) ease;
+}
+
+/* Modal-specific inputs */
+.modal-input,
+.modal-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 6px 0 0 0;
 }
 
 textarea {
@@ -271,9 +292,9 @@ label,
 }
 
 .app-shell {
-  width: min(1100px, calc(100% - 32px));
+  width: min(980px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 28px 0 54px;
+  padding: 20px 0 48px;
   animation: pageEnter 360ms ease both;
 }
 
@@ -282,8 +303,29 @@ label,
   align-items: flex-start;
   justify-content: space-between;
   gap: 18px;
-  margin-bottom: 16px;
-  padding: clamp(20px, 4vw, 34px);
+  margin: 12px 0 28px 0;
+  padding: clamp(18px, 3vw, 28px) clamp(24px, 5vw, 40px);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--surface) 92%, #000 8%);
+  box-shadow: var(--shadow-deep), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px) saturate(1.2);
+}
+
+body.dark .app-header {
+  background: color-mix(in srgb, var(--surface) 88%, #000 12%);
+}
+
+.composer {
+  background: var(--surface-strong);
+  box-shadow: var(--shadow-deep);
+  border-color: color-mix(in srgb, var(--border) 80%, var(--accent));
+  transform: translateY(-2px);
+}
+
+.notes-panel {
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  box-shadow: none;
+  border-color: color-mix(in srgb, var(--border) 40%, transparent);
 }
 
 .app-logo {
@@ -330,7 +372,7 @@ label,
 }
 
 .hero-actions {
-  margin-top: 18px;
+  margin-top: 14px;
 }
 
 .badge {
@@ -373,11 +415,13 @@ label,
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
+  opacity: 0.9;
 }
 
 .stat-card {
   padding: 16px;
+  background: color-mix(in srgb, var(--surface) 50%, transparent);
 }
 
 .stat-card span {
@@ -401,7 +445,11 @@ label,
 
 .composer,
 .controls {
-  margin-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+.notes-panel {
+  margin-bottom: 32px;
 }
 
 .section-heading,
@@ -482,13 +530,6 @@ form {
 .swatch-rose span { background: #b97979; }
 .swatch-emerald span { background: #6f9d83; }
 
-.counters {
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 10px;
-  font-size: 0.82rem;
-}
-
 .form-actions {
   flex-wrap: wrap;
   gap: 10px;
@@ -555,6 +596,8 @@ form {
   display: grid;
   grid-template-columns: minmax(220px, 1fr) 1.2fr minmax(130px, 0.35fr) auto;
   gap: 12px;
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  border-color: color-mix(in srgb, var(--border) 80%, transparent);
 }
 
 .controls-toggle {
@@ -625,6 +668,10 @@ form {
   gap: 14px;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 .note-card {
   --note-accent: var(--accent);
   display: grid;
@@ -635,15 +682,17 @@ form {
   background: color-mix(in srgb, var(--surface-strong) 92%, transparent);
   padding: 16px;
   gap: 13px;
+  cursor: pointer;
   animation: cardIn 300ms ease both;
   animation-delay: var(--stagger, 0ms);
   transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(0);
-  transition: transform var(--speed) ease, border-color var(--speed) ease, box-shadow var(--speed) ease;
+  transition: transform var(--speed) ease, border-color var(--speed) ease, box-shadow var(--speed) ease, background var(--speed) ease;
 }
 
 .note-card:hover {
   transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(-4px);
   border-color: color-mix(in srgb, var(--note-accent) 48%, var(--border));
+  background: var(--surface-strong);
   box-shadow: var(--shadow-deep), 0 0 28px color-mix(in srgb, var(--note-accent) 18%, transparent);
 }
 
@@ -693,6 +742,11 @@ form {
   color: var(--muted);
   overflow-wrap: anywhere;
   white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .note-body h2,
@@ -875,6 +929,50 @@ form {
 .modal {
   width: min(420px, 100%);
   padding: 22px;
+}
+
+.read-modal-content {
+  width: min(720px, 100%);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.read-modal-content .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.read-modal-content h2 {
+  margin-top: 0;
+  font-size: 1.8rem;
+  line-height: 1.2;
+}
+
+.read-modal-content #read-body {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+  margin: 16px 0;
+  -webkit-line-clamp: unset;
+  display: block;
+}
+
+.read-modal-content .modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.read-modal-content #read-meta {
+  font-size: 0.82rem;
+  color: var(--muted);
 }
 
 .modal p {

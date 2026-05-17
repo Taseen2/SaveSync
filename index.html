@@ -28,7 +28,8 @@
         <h1 class="app-logo">SaveSync</h1>
         <p class="hero-copy">A calm place to write, organize, and find your notes.</p>
         <div class="hero-actions">
-          <span class="badge">✦ Minimal & Fast</span>
+          <button class="badge badge-interactive ripple-target" type="button" data-action="jump-to-notes">Your
+            notes</button>
         </div>
       </div>
       <button class="theme-toggle ripple-target" id="theme-toggle" type="button" data-action="theme"
@@ -69,8 +70,7 @@
         </div>
 
         <label for="note-body">Note</label>
-        <textarea id="note-body" name="body" rows="6" maxlength="1200" placeholder="Write the details here..."
-          required></textarea>
+        <textarea id="note-body" name="body" rows="6" placeholder="Write the details here..." required></textarea>
         <div class="preview-panel hidden" id="markdown-preview" aria-live="polite"></div>
 
         <div class="composer-footer">
@@ -99,20 +99,16 @@
             </label>
           </fieldset>
 
-          <!-- SECTION: Character and Word Counters -->
-          <div class="counters" aria-live="polite">
-            <span id="word-count">0 words</span>
-            <span id="char-count">0 / 1200 chars</span>
+          <div class="form-actions">
+            <!-- <button class="button button-ghost hidden ripple-target" id="cancel-edit" type="button"
+            data-action="cancel-edit">Cancel</button> -->
+            <button class="button button-ghost ripple-target" type="button" data-action="clear-composer">Clear all</button>
+            <button class="button button-primary ripple-target" id="save-note" type="submit">Add note</button>
           </div>
+
         </div>
 
-        <div class="form-actions">
-          <button class="button button-primary ripple-target" id="save-note" type="submit">Add note</button>
-          <button class="button button-ghost hidden ripple-target" id="cancel-edit" type="button"
-            data-action="cancel-edit">Cancel</button>
-          <button class="button button-ghost ripple-target" type="button" data-action="clear-composer">Clear
-            all</button>
-        </div>
+
       </form>
     </section>
 
@@ -127,7 +123,6 @@
 
       <div class="filter-group" id="filter-group" aria-label="Filter notes">
         <button class="filter-chip active ripple-target" type="button" data-filter="all">All</button>
-        <button class="filter-chip ripple-target" type="button" data-filter="pinned">Pinned</button>
         <button class="filter-chip ripple-target" type="button" data-filter="favorites">Favorites</button>
         <button class="filter-chip ripple-target" type="button" data-filter="archived">Archived</button>
         <button class="filter-chip ripple-target" type="button" data-filter="recent">Recent</button>
@@ -146,7 +141,7 @@
     </section>
 
     <!-- SECTION: Notes Panel (The Notebook Grid) -->
-    <section class="notes-panel glass" aria-labelledby="notes-title">
+    <section class="notes-panel glass" id="notes-panel" aria-labelledby="notes-title">
       <div class="notes-toolbar">
         <div>
           <h2 id="notes-title">Your notes</h2>
@@ -154,6 +149,7 @@
         </div>
 
         <div class="utility-actions">
+          <button class="badge badge-danger ripple-target" type="button" data-action="clear-all-notes">Clear All Notes</button>
           <button class="badge badge-interactive ripple-target" type="button" data-action="export-json">Export</button>
           <button class="badge badge-interactive ripple-target" type="button" data-action="import-json">Import</button>
         </div>
@@ -218,8 +214,27 @@
     </div>
   </div>
 
+  <div class="modal-backdrop hidden" id="read-modal" role="dialog" aria-modal="true" aria-labelledby="read-title">
+    <div class="modal glass read-modal-content">
+      <div class="modal-header">
+        <div class="note-badges" id="read-badges"></div>
+        <button class="button button-ghost ripple-target" type="button" data-action="close-modal"
+          aria-label="Close modal">×</button>
+      </div>
+      <h2 id="read-title">Note Title</h2>
+      <div class="note-body" id="read-body"></div>
+      <div class="modal-footer">
+        <span id="read-meta"></span>
+        <div class="form-actions">
+          <button class="button button-ghost ripple-target" type="button" data-action="delete-from-modal">Delete</button>
+          <button class="button button-ghost ripple-target" type="button" data-action="edit-from-modal">Edit Note</button>
+          <button class="button button-primary button-accent ripple-target" type="button" data-action="close-modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- SECTION: Main Script Injection -->
-  <input type="file" id="import-file" accept=".json" class="hidden" aria-hidden="true">
   <script src="script.js"></script>
 </body>
 
