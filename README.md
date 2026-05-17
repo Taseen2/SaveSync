@@ -27,7 +27,7 @@ A minimalist, high-performance note-taking application built with Vanilla JavaSc
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/savesync-notes.git
+   git clone https://github.com/Taseen2/SaveSync.git
    ```
 2. **Open the project:**
    Simply open `index.html` in your favorite web browser.
