@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- SECTION: Document Metadata and Styling -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Notes App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- SECTION: Visual Effects and Loading Screen -->
+  <div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
+  <div class="startup-loader" id="startup-loader" aria-hidden="true">
+    <div class="loader-orbit"></div>
+    <div class="skeleton-stack">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <main class="app-shell" id="app-shell">
+    <!-- SECTION: App Header (Logo, Tagline, and Theme Toggle) -->
+    <header class="app-header glass">
+      <div>
+        <h1 class="app-logo">SaveSync</h1>
+        <p class="hero-copy">A calm place to write, organize, and find your notes.</p>
+        <div class="hero-actions">
+          <span class="badge">✦ Minimal & Fast</span>
+        </div>
+      </div>
+      <button class="theme-toggle ripple-target" id="theme-toggle" type="button" data-action="theme"
+        aria-label="Switch theme">
+        <span class="theme-icon" aria-hidden="true">Dark</span>
+      </button>
+    </header>
+
+    <!-- SECTION: Note Composer (Form for creating and editing notes) -->
+    <section class="composer glass" id="composer" aria-labelledby="composer-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="composer-title">Create a note</h2>
+        </div>
+        <p id="form-mode">Drafts auto-save while you type.</p>
+
+        <div class="utility-actions">
+          <button class="button button-ghost ripple-target" type="button" data-action="export-json">Export</button>
+          <button class="button button-ghost ripple-target" type="button" data-action="import-json">Import</button>
+          <input class="hidden" id="import-file" type="file" accept="application/json">
+        </div>
+      </div>
+
+      <form id="note-form" autocomplete="off">
+        <input type="hidden" id="note-id">
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="note-title">Title</label>
+            <input id="note-title" name="title" type="text" maxlength="90"
+              placeholder="Project idea, reading list, meeting note..." required>
+          </div>
+
+          <div class="field">
+            <label for="note-category">Category / tag</label>
+            <input id="note-category" name="category" type="text" maxlength="30" placeholder="Work, Study, Personal...">
+          </div>
+        </div>
+
+        <label for="note-body">Note</label>
+        <textarea id="note-body" name="body" rows="6" maxlength="1200" placeholder="Write the details here..."
+          required></textarea>
+        <div class="preview-panel hidden" id="markdown-preview" aria-live="polite"></div>
+
+        <div class="composer-footer">
+          <!-- SECTION: Note Color Selection -->
+          <fieldset class="palette" aria-label="Choose note color">
+            <legend>Choose note color</legend>
+            <label class="swatch swatch-cyan">
+              <input type="radio" name="color" value="cyan" checked>
+              <span></span>
+            </label>
+            <label class="swatch swatch-violet">
+              <input type="radio" name="color" value="violet">
+              <span></span>
+            </label>
+            <label class="swatch swatch-amber">
+              <input type="radio" name="color" value="amber">
+              <span></span>
+            </label>
+            <label class="swatch swatch-rose">
+              <input type="radio" name="color" value="rose">
+              <span></span>
+            </label>
+            <label class="swatch swatch-emerald">
+              <input type="radio" name="color" value="emerald">
+              <span></span>
+            </label>
+          </fieldset>
+
+          <!-- SECTION: Character and Word Counters -->
+          <div class="counters" aria-live="polite">
+            <span id="word-count">0 words</span>
+            <span id="char-count">0 / 1200 chars</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="button button-primary ripple-target" id="save-note" type="submit">Add note</button>
+          <button class="button button-ghost hidden ripple-target" id="cancel-edit" type="button"
+            data-action="cancel-edit">Cancel</button>
+          <button class="button button-ghost ripple-target" type="button" data-action="clear-composer">Clear
+            all</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- SECTION: Search and Filters (Controls for the Notebook) -->
+    <section class="controls glass" aria-label="Search and filters">
+      <button class="button button-ghost controls-toggle ripple-target" type="button"
+        data-action="toggle-filters">Filters</button>
+      <label class="search-label" for="search-notes">
+        <span>Search notes</span>
+        <input id="search-notes" type="search" placeholder="Search titles, text, or tags...">
+      </label>
+
+      <div class="filter-group" id="filter-group" aria-label="Filter notes">
+        <button class="filter-chip active ripple-target" type="button" data-filter="all">All</button>
+        <button class="filter-chip ripple-target" type="button" data-filter="pinned">Pinned</button>
+        <button class="filter-chip ripple-target" type="button" data-filter="favorites">Favorites</button>
+        <button class="filter-chip ripple-target" type="button" data-filter="archived">Archived</button>
+        <button class="filter-chip ripple-target" type="button" data-filter="recent">Recent</button>
+        <button class="filter-chip ripple-target" type="button" data-filter="trash">Trash</button>
+      </div>
+
+      <label class="sort-label" for="sort-notes">
+        <span>Sort</span>
+        <select id="sort-notes">
+          <option value="manual">Custom</option>
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="az">A-Z</option>
+        </select>
+      </label>
+    </section>
+
+    <!-- SECTION: Notes Panel (The Notebook Grid) -->
+    <section class="notes-panel glass" aria-labelledby="notes-title">
+      <div class="notes-toolbar">
+        <div>
+          <h2 id="notes-title">Your notes</h2>
+          <p id="notes-count">0 notes saved</p>
+        </div>
+
+        <div class="utility-actions">
+          <button class="badge badge-interactive ripple-target" type="button" data-action="export-json">Export</button>
+          <button class="badge badge-interactive ripple-target" type="button" data-action="import-json">Import</button>
+        </div>
+      </div>
+
+      <!-- SECTION: Bulk Action Toolbar -->
+      <div class="bulk-toolbar hidden" id="bulk-toolbar" aria-live="polite">
+        <span id="selected-count">0 selected</span>
+        <button class="button button-ghost ripple-target" type="button" data-action="bulk-favorite">Favorite</button>
+        <button class="button button-ghost ripple-target" type="button" data-action="bulk-archive">Archive</button>
+        <button class="button button-danger ripple-target" type="button" data-action="bulk-delete">Delete</button>
+        <button class="button button-ghost ripple-target" type="button" data-action="clear-selection">Clear</button>
+      </div>
+
+      <!-- SECTION: Note Lists (Pinned and Regular) -->
+      <section class="note-section" id="pinned-section" aria-labelledby="pinned-title">
+        <h3 id="pinned-title">Pinned Notes</h3>
+        <div class="notes-grid" id="pinned-notes" aria-live="polite"></div>
+      </section>
+
+      <section class="note-section" aria-labelledby="regular-title">
+        <h3 id="regular-title">Notes</h3>
+        <div class="notes-grid" id="notes-container" aria-live="polite"></div>
+      </section>
+
+      <p class="empty-state" id="empty-state">No notes yet. Add your first note above.</p>
+    </section>
+
+    <!-- SECTION: Statistics Row (Note counts overview) -->
+    <section class="stats-row" aria-label="Notes overview">
+      <article class="stat-card glass">
+        <span id="total-stat">0</span>
+        <p>Total</p>
+      </article>
+      <article class="stat-card glass">
+        <span id="pinned-stat">0</span>
+        <p>Pinned</p>
+      </article>
+      <article class="stat-card glass">
+        <span id="favorite-stat">0</span>
+        <p>Favorites</p>
+      </article>
+      <article class="stat-card glass">
+        <span id="archived-stat">0</span>
+        <p>Archived</p>
+      </article>
+    </section>
+  </main>
+
+
+  <!-- SECTION: Notifications and Modal Overlays -->
+  <div class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="modal-backdrop hidden" id="delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+    <div class="modal glass">
+      <h2 id="delete-title">Delete this note?</h2>
+      <p id="delete-text">This moves the note out of your workspace. You can restore it from Trash.</p>
+      <div class="form-actions">
+        <button class="button button-danger ripple-target" type="button" data-action="confirm-delete">Delete</button>
+        <button class="button button-ghost ripple-target" type="button" data-action="close-modal">Keep note</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: Main Script Injection -->
+  <input type="file" id="import-file" accept=".json" class="hidden" aria-hidden="true">
+  <script src="script.js"></script>
+</body>
+
+</html>
